@@ -9,6 +9,7 @@ import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 import { Moive, MovieResponse, moviesApi } from "../api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Loader from "../components/Loader";
 
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -18,12 +19,6 @@ const Container = styled.FlatList`
     background-color: ${(props) => props.theme.mainBgColor};
 `as unknown as typeof FlatList;
 
-const Loader = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    background-color: ${(props) => props.theme.mainBgColor};
-`;
 const ListTitle = styled.Text`
     color: white;
     font-size: 18px;
@@ -78,7 +73,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     });
 
     const onRefresh = async () => {
-        queryClient.refetchQueries(["movies"]);
+        await queryClient.refetchQueries({ queryKey: ["movies"] });
     }
 
 
@@ -87,9 +82,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     console.log(refreshing)
     //console.log(Object.values(nowPlayingData?.results[0]).map((v) => typeof v))
     return loading ? (
-        <Loader>
-            <ActivityIndicator size="large" />
-        </Loader>
+        <Loader />
     ) : (
         upcomingData ? <Container
             onRefresh={onRefresh}
