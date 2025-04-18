@@ -2,6 +2,15 @@
   "expo": {
     "name": "project05-expo-bare",
     "slug": "project05-expo-bare",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [
+      "expo-font",
+      "expo-asset"
+    ],
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    }
   }
 }
