@@ -11,7 +11,7 @@ const Wrapper = styled.View`
 
 const Loader = () => (
     <Wrapper>
-        <ActivityIndicator />
+        <ActivityIndicator size={'large'} />
     </Wrapper>
 )
 

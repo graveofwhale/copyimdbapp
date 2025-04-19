@@ -1,5 +1,3 @@
-import { BackHandler } from "react-native";
-
 const API_KEY = "7a3633b356521c2f1daafb700635cea5";
 const BASE_URL = "https://api.themoviedb.org/3"
 
@@ -39,7 +37,15 @@ export const moviesApi = {
             .then((res) => res.json()),
     nowPlaying: () =>
         fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
+            .then((res) => res.json()),
+    search: ({ queryKey }) => {
+        const [_, query] = queryKey;
+        //console.log('searchFetcher : ', query)
+        return fetch(
+            `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ko-KR&region=KR&query=${query}`)
             .then((res) => res.json())
+    }
+
 }
 
 export const tvApi = {
@@ -51,5 +57,12 @@ export const tvApi = {
             .then((res) => res.json()),
     topRated: () =>
         fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
+            .then((res) => res.json()),
+    search: ({ queryKey }) => {
+        const [_, query] = queryKey; // queryKey: ["searchMovie", query], query값만 쓴다는 의미
+        //console.log('searchFetcher : ', query)
+        return fetch(
+            `${BASE_URL}/search/tv?api_key=${API_KEY}&language=ko-KR&region=KR&query=${query}`)
             .then((res) => res.json())
+    }
 }
