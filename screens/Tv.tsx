@@ -25,7 +25,6 @@ const Tv = () => {
         setRefreshing(false)
     }
     const loading = todayLoading || topLoading || trendingLoading;
-    //const refreshing = todayDataRefetching || topDataRefetching || trendingDataRefetching;
     console.log('tv loading', refreshing)
     if (loading) {
         return <Loader />;
