@@ -33,6 +33,7 @@ export interface TV {
     name: string,
     vote_average: number,
     vote_count: number,
+    media_type: string;
 }
 interface BaseResponse {
     page: number;
@@ -43,11 +44,13 @@ export interface MovieResponse extends BaseResponse {
     results: Moive[];
 }
 
-
+export interface TVResponse extends BaseResponse {
+    results: TV[];
+}
 
 export const moviesApi = {
     trending: () =>
-        fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`)
+        fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
             .then((res) => res.json()),
     upcoming: () =>
         fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
@@ -61,13 +64,19 @@ export const moviesApi = {
         return fetch(
             `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ko-KR&region=KR&query=${query}`)
             .then((res) => res.json())
-    }
-
+    },
+    detail: ({ queryKey }) => {
+        const [_, id] = queryKey;
+        //console.log('searchFetcher : ', query)
+        return fetch(
+            `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=videos`)
+            .then((res) => res.json())
+    },
 }
 
 export const tvApi = {
     trending: () =>
-        fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}`)
+        fetch(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
             .then((res) => res.json()),
     airingToday: () =>
         fetch(`${BASE_URL}/tv/airing_today?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
@@ -81,5 +90,12 @@ export const tvApi = {
         return fetch(
             `${BASE_URL}/search/tv?api_key=${API_KEY}&language=ko-KR&region=KR&query=${query}`)
             .then((res) => res.json())
-    }
+    },
+    detail: ({ queryKey }) => {
+        const [_, id] = queryKey;
+        //console.log('searchFetcher : ', query)
+        return fetch(
+            `${BASE_URL}/tv/${id}?api_key=${API_KEY}&append_to_response=videos`)
+            .then((res) => res.json())
+    },
 }

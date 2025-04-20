@@ -16,11 +16,11 @@ export default function Stack() {
     return (
         <NativeStack.Navigator
             screenOptions={{
-                // presentation: "card",
-                // animation: "slide_from_right",
+                presentation: "modal",
+                animation: "slide_from_bottom",
                 headerTintColor: isDark ? colors.yellow : colors.black,
-                // headerBackButtonDisplayMode: "default",
-                headerBackVisible: true,
+                headerBackButtonDisplayMode: "default",
+                headerBackVisible: true, // ios now working
                 headerTitleAlign: "center",
                 headerStyle: {
                     backgroundColor: isDark ? colors.primary : colors.white,
