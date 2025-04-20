@@ -3,6 +3,11 @@ import React from "react";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
+import { useNavigation } from "@react-navigation/native";
+import Detail from "../screens/Detail";
+import { TouchableOpacity } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Moive } from "../api";
 
 const HMovie = styled.View`
    padding: 0px 30px;
@@ -25,7 +30,7 @@ const Overview = styled.Text`
 const Release = styled.Text`
    color: white;
    font-size: 12px;
-   margin-vertical: 10px;
+   margin: 5px;
    font-weight: 500;
    opacity: 0.6;
  `;
@@ -42,7 +47,14 @@ interface HMediaProps {
     overview: string;
     releaseDate?: string;
     voteAverage?: number;
+    fullData: Moive;
 }
+type RootStackParamList = {
+    Stack: {
+        screen: string,
+        params: object,
+    };
+};
 
 const HMedia: React.FC<HMediaProps> = ({
     posterPath,
@@ -50,33 +62,46 @@ const HMedia: React.FC<HMediaProps> = ({
     overview,
     releaseDate,
     voteAverage,
+    fullData,
 }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const goToDetail = () => {
+        navigation.navigate("Stack", {
+            screen: "Detail",
+            params: {
+                ...fullData,
+            },
+        })
+    }
+
     return (
-        <HMovie>
-            <Poster path={posterPath} />
-            <HColumn>
-                <Title>
-                    {originalTitle.length > 30
-                        ? `${originalTitle.slice(0, 30)}...`
-                        : originalTitle}
-                </Title>
-                {releaseDate ? (
-                    <Release>
-                        {new Date(releaseDate).toLocaleDateString("ko", {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                        })}
-                    </Release>
-                ) : null}
-                {voteAverage ? <Votes votes={voteAverage} /> : null}
-                <Overview>
-                    {overview !== "" && overview.length > 140
-                        ? `${overview.slice(0, 140)}...`
-                        : overview}
-                </Overview>
-            </HColumn>
-        </HMovie>
+        <TouchableOpacity onPress={goToDetail}>
+            <HMovie>
+                <Poster path={posterPath} />
+                <HColumn>
+                    <Title>
+                        {originalTitle.length > 30
+                            ? `${originalTitle.slice(0, 30)}...`
+                            : originalTitle}
+                    </Title>
+                    {releaseDate ? (
+                        <Release>
+                            {new Date(releaseDate).toLocaleDateString("ko", {
+                                month: "long",
+                                day: "numeric",
+                                year: "numeric",
+                            })}
+                        </Release>
+                    ) : null}
+                    {voteAverage ? <Votes votes={voteAverage} /> : null}
+                    <Overview>
+                        {overview !== "" && overview.length > 140
+                            ? `${overview.slice(0, 140)}...`
+                            : overview}
+                    </Overview>
+                </HColumn>
+            </HMovie>
+        </TouchableOpacity>
     );
 };
 
