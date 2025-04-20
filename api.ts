@@ -52,9 +52,18 @@ export const moviesApi = {
     trending: () =>
         fetch(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
             .then((res) => res.json()),
-    upcoming: () =>
-        fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
-            .then((res) => res.json()),
+    // upcoming: () =>
+    //     fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
+    //         .then((res) => res.json()),
+    upcoming: ({ pageParam }) => {
+        console.log('api들어옴, pageParam 확인', pageParam)
+        return (
+            fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko-KR&page=${pageParam}`)
+                .then((res) => res.json())
+        )
+        //fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko-KR&page=${pageParam}&region=KR`)
+        //한국페이지는 짧다.
+    },
     nowPlaying: () =>
         fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=KR`)
             .then((res) => res.json()),

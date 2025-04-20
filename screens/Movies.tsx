@@ -8,7 +8,7 @@ import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 import { Moive, MovieResponse, moviesApi } from "../api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import HList from "../components/HList";
 
@@ -48,26 +48,22 @@ const HSeparator = styled.View`
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     const [refreshing, setRefreshing] = useState(false);
     const queryClient = useQueryClient();
-    const {
-        isLoading: nowPlayingLoading,
-        data: nowPlayingData,
-    } = useQuery<MovieResponse>({
+    const { isLoading: nowPlayingLoading, data: nowPlayingData, } = useQuery<MovieResponse>({
         queryKey: ["movies", "nowPlaying"],
         queryFn: moviesApi.nowPlaying,
     });
-    const {
-        isLoading: upcomingLoading,
-        data: upcomingData,
-    } = useQuery<MovieResponse>({
+    const { isLoading: upcomingLoading, data: upcomingData, hasNextPage, fetchNextPage, } = useInfiniteQuery<MovieResponse>({
         queryKey: ["movies", "upcoming"],
         queryFn: moviesApi.upcoming,
+        initialPageParam: 1,
+        getNextPageParam: (currentPage) => {
+            const nextPage = currentPage.page + 1;
+            return nextPage > currentPage.total_pages ? null : nextPage;
+        },
     });
+    //console.log('변경확인:', upcomingData)
 
-    const {
-        isLoading: trendingLoading,
-        data: trendingData,
-
-    } = useQuery<MovieResponse>({
+    const { isLoading: trendingLoading, data: trendingData, } = useQuery<MovieResponse>({
         queryKey: ["movies", "trending"],
         queryFn: moviesApi.trending,
     });
@@ -83,62 +79,71 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     console.log('movie loading', refreshing)
     //console.log(Object.values(nowPlayingData?.results[0]).map((v) => typeof v))
     const loadMore = () => {
-        Alert.alert("Load More")
+        if (hasNextPage) {
+            fetchNextPage();
+        }
+        else if (!hasNextPage) {
+            Alert.alert("page complete")
+        }
     }
+    //console.log(upcomingData?.pages.map(page => page.results))
+
+
     return loading ? (
         <Loader />
     ) : (
-        upcomingData ? <Container
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.4}
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            ListHeaderComponent={
-                <>
-                    <Swiper
-                        horizontal
-                        loop
-                        showsButtons={false}
-                        showsPagination={false}
-                        autoplay
-                        autoplayTimeout={3.5}
-                        containerStyle={{
-                            marginBottom: 30,
-                            width: "100%",
-                            height: SCREEN_HEIGHT / 4
-                        }}>
-                        {nowPlayingData?.results.map((movie) =>
-                            <Slide
-                                key={movie.id}
-                                backdropPath={movie.backdrop_path || "404Error"}
-                                posterPath={movie.poster_path || "404Error"}
-                                originalTitle={movie.original_title}
-                                voteAverage={movie.vote_average}
-                                overview={movie.overview}
-                                fullData={movie}
-                            />)}
-                    </Swiper>
-                    {trendingData ? (
-                        <HList title="Trending Movies" data={trendingData.results} />
-                    ) : null}
-                    <ComingSoonTitle>Coming Soon</ComingSoonTitle>
-                </>
-            }
-            data={upcomingData.results}
-            keyExtractor={(item) => item.id + ""}
-            ItemSeparatorComponent={HSeparator}
-            renderItem={({ item }) => (
-                <HMedia
-                    key={item.id}
-                    posterPath={item.poster_path || "404"}
-                    originalTitle={item.original_title}
-                    overview={item.overview}
-                    releaseDate={item.release_date}
-                    fullData={item}
-                />
-            )}
-        >
-        </Container> : null
+        upcomingData ? (
+            <Container
+                onEndReached={loadMore}
+                onEndReachedThreshold={1}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+                ListHeaderComponent={
+                    <>
+                        <Swiper
+                            horizontal
+                            loop
+                            showsButtons={false}
+                            showsPagination={false}
+                            autoplay
+                            autoplayTimeout={3.5}
+                            containerStyle={{
+                                marginBottom: 30,
+                                width: "100%",
+                                height: SCREEN_HEIGHT / 4
+                            }}>
+                            {nowPlayingData?.results.map((movie) =>
+                                <Slide
+                                    key={movie.id}
+                                    backdropPath={movie.backdrop_path || "404Error"}
+                                    posterPath={movie.poster_path || "404Error"}
+                                    originalTitle={movie.original_title}
+                                    voteAverage={movie.vote_average}
+                                    overview={movie.overview}
+                                    fullData={movie}
+                                />)}
+                        </Swiper>
+                        {trendingData ? (
+                            <HList title="Trending Movies" data={trendingData.results} />
+                        ) : null}
+                        <ComingSoonTitle>Coming Soon</ComingSoonTitle>
+                    </>
+                }
+                data={upcomingData?.pages.map((page) => page.results).flat()}
+                keyExtractor={(item) => item.id + ""}
+                ItemSeparatorComponent={HSeparator}
+                renderItem={({ item }) => (
+                    <HMedia
+                        key={item.id}
+                        posterPath={item.poster_path || "404"}
+                        originalTitle={item.original_title}
+                        overview={item.overview}
+                        releaseDate={item.release_date}
+                        fullData={item}
+                    />
+                )}
+            >
+            </Container>) : null
     )
 };
 
