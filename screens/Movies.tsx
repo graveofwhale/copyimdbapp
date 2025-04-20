@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import styled from 'styled-components/native';
 import Swiper from 'react-native-swiper';
-import { ActivityIndicator, Dimensions, FlatList, RefreshControl, Text, View, } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, FlatList, RefreshControl, Text, View, } from "react-native";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
@@ -82,10 +82,15 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
     console.log('movie loading', refreshing)
     //console.log(Object.values(nowPlayingData?.results[0]).map((v) => typeof v))
+    const loadMore = () => {
+        Alert.alert("Load More")
+    }
     return loading ? (
         <Loader />
     ) : (
         upcomingData ? <Container
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.4}
             onRefresh={onRefresh}
             refreshing={refreshing}
             ListHeaderComponent={
