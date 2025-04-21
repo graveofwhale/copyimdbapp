@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { Dimensions, Linking, Platform, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, Dimensions, Linking, Platform, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Moive, moviesApi, TV, tvApi } from "../api";
 import Poster from "../components/Poster";
@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import { Ionicons } from "@expo/vector-icons"
 import * as WebBrowser from 'expo-web-browser';
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -88,6 +89,8 @@ const Detail: React.FC<DetailScreenProps> = ({
                     ? params.original_title
                     : params.original_name,
             })
+            const navigation = useNavigation();
+            setOptions({ headerLeft: () => <Button title="Back" onPress={() => navigation.goBack()} />, })
         }
     }
     const ShareButton = () => (

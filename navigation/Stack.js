@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, useColorScheme } from 'react-native'
+import { View, Text, TouchableOpacity, useColorScheme, Button } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { colors } from '../assets/colors'
 import Detail from '../screens/Detail';
 import styled from 'styled-components/native';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -12,7 +13,6 @@ const NativeStack = createNativeStackNavigator();
 
 export default function Stack() {
     const isDark = useColorScheme() === 'dark'; // 다크모드 여부 확인
-
     return (
         <NativeStack.Navigator
             screenOptions={{
@@ -27,9 +27,11 @@ export default function Stack() {
                 },
                 headerTitleStyle: {
                     color: isDark ? colors.yellow : colors.primary,
-                }
+                },
             }}>
-            <NativeStack.Screen name="Detail" component={Detail} options={{ gestureEnabled: true }} />
+            <NativeStack.Screen name="Detail" component={Detail} options={{
+                gestureEnabled: true,
+            }} />
         </NativeStack.Navigator>
     )
 }

@@ -9,18 +9,17 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Moive } from "../api";
 
 const HMovie = styled.View`
-   padding: 0px 30px;
-   
-   flex-direction: row;
+   padding: 10px 30px;
+   flex-direction: row;   
  `;
 
-const HColumn = styled.View`
+const HColumn = styled.View`   
    margin-left: 15px;
    width: 80%;
  `;
 
 const Overview = styled.Text`
-   color: white;
+   color: ${(props) => props.theme.textColor};
    opacity: 0.8;
    width: 80%;
    font-size: 11px; 
@@ -35,7 +34,7 @@ const Release = styled.Text`
  `;
 
 const Title = styled.Text`
-   color: white;
+   color:  ${(props) => props.theme.textColor};
    font-weight: 600;
    margin-top: 7px;
  `;
