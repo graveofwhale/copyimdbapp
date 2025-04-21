@@ -17,7 +17,7 @@ export default function Stack() {
         <NativeStack.Navigator
             screenOptions={{
                 presentation: "modal",
-                animation: "slide_from_bottom",
+                // animation: "slide_from_bottom",
                 headerTintColor: isDark ? colors.yellow : colors.black,
                 headerBackButtonDisplayMode: "default",
                 headerBackVisible: true, // ios now working
@@ -29,7 +29,8 @@ export default function Stack() {
                     color: isDark ? colors.yellow : colors.primary,
                 }
             }}>
-            <NativeStack.Screen name="Detail" component={Detail} />
+            <NativeStack.Screen name="Detail" component={Detail} options={{ gestureEnabled: true }} />
         </NativeStack.Navigator>
     )
 }
+//gestureEnabled, ios 용, 밑으로 내리는 기능, 백버튼 대용

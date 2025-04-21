@@ -83,7 +83,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             fetchNextPage();
         }
         else if (!hasNextPage) {
-            Alert.alert("page complete")
+            Alert.alert("페이지 더 없당")
         }
     }
     //console.log(upcomingData?.pages.map(page => page.results))
