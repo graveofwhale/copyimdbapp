@@ -1,7 +1,8 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { Alert, FlatList } from "react-native";
 import styled from "styled-components/native";
 import VMedia from "./VMedia";
+import { Moive, TV } from "../api";
 
 const ListTitle = styled.Text`
     color: white;
@@ -21,18 +22,24 @@ export const HListSeparator = styled.View`
 interface HListProps {
     title: string;
     data: any[];
+    loadFunc?: () => void;
 }
+// const loadMore = () => {
+//     Alert.alert("it work")
+// }
 
-const HList: React.FC<HListProps> = ({ title, data }) => (
+const HList: React.FC<HListProps> = ({ title, data, loadFunc }) => (
     <ListContainer>
         <ListTitle>{title}</ListTitle>
         <FlatList
+            onEndReached={loadFunc}
+            onEndReachedThreshold={1}
             data={data}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 30 }}
             ItemSeparatorComponent={HListSeparator}
-            keyExtractor={(item) => item.id + ""}
+            keyExtractor={(item, index) => `${item.id}-${index}`} //좀더 복잡한 키값얻기 /(item) => item.id + ""
             renderItem={({ item }) => (
                 <VMedia
                     posterPath={item.poster_path}

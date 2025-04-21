@@ -52,7 +52,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
         queryKey: ["movies", "nowPlaying"],
         queryFn: moviesApi.nowPlaying,
     });
-    const { isLoading: upcomingLoading, data: upcomingData, hasNextPage, fetchNextPage, } = useInfiniteQuery<MovieResponse>({
+    const { isLoading: upcomingLoading, data: upcomingData, hasNextPage: upcomingHasNextPage, fetchNextPage: upcomingFetchNextPage, } = useInfiniteQuery<MovieResponse>({
         queryKey: ["movies", "upcoming"],
         queryFn: moviesApi.upcoming,
         initialPageParam: 1,
@@ -63,9 +63,14 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     });
     //console.log('변경확인:', upcomingData)
 
-    const { isLoading: trendingLoading, data: trendingData, } = useQuery<MovieResponse>({
+    const { isLoading: trendingLoading, data: trendingData, hasNextPage: trendingHasNextPage, fetchNextPage: trendingFetchNextPage } = useInfiniteQuery<MovieResponse>({
         queryKey: ["movies", "trending"],
         queryFn: moviesApi.trending,
+        initialPageParam: 1,
+        getNextPageParam: (currentPage) => {
+            const nextPage = currentPage.page + 1;
+            return nextPage > currentPage.total_pages ? null : nextPage;
+        }
     });
 
     const onRefresh = async () => {
@@ -79,15 +84,22 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     console.log('movie loading', refreshing)
     //console.log(Object.values(nowPlayingData?.results[0]).map((v) => typeof v))
     const loadMore = () => {
-        if (hasNextPage) {
-            fetchNextPage();
+        if (upcomingHasNextPage) {
+            upcomingFetchNextPage();
         }
-        else if (!hasNextPage) {
+        else if (!upcomingHasNextPage) {
             Alert.alert("페이지 더 없당")
         }
     }
     //console.log(upcomingData?.pages.map(page => page.results))
-
+    const loadMore2 = () => {
+        if (trendingHasNextPage) {
+            trendingFetchNextPage();
+        }
+        else if (!trendingHasNextPage) {
+            Alert.alert("페이지 더 없당")
+        }
+    }
 
     return loading ? (
         <Loader />
@@ -124,7 +136,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                                 />)}
                         </Swiper>
                         {trendingData ? (
-                            <HList title="Trending Movies" data={trendingData.results} />
+                            <HList title="Trending Movies" data={trendingData?.pages.map((page) => page.results).flat()}
+                                loadFunc={loadMore2}
+                            />
                         ) : null}
                         <ComingSoonTitle>Coming Soon</ComingSoonTitle>
                     </>
